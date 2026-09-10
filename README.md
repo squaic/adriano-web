@@ -25,4 +25,5 @@ La V1 propose une partie complète en sept manches contre trois bots : pioche et
 - `npm run build` crée une version de production.
 - `npm start` démarre la version de production.
 - `npm run lint` analyse le code avec ESLint.
+- `npm run typecheck` vérifie le code TypeScript utilisé par la production.
 - `npm test` exécute les tests du moteur de jeu.
