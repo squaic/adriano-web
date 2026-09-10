@@ -1,0 +1,1 @@
+export function GameLog({ entries }: { entries: string[] }) { return <aside className="game-log"><h2>Journal</h2><ol>{entries.map((entry, i) => <li key={`${i}-${entry}`}>{entry}</li>)}</ol></aside>; }
