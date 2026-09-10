@@ -7,6 +7,7 @@ import { drawnCardForHuman, visibleDiscard } from "@/game/presentation";
 import { adrianoOutcome, handScore, winners } from "@/game/scoring";
 import { GameState } from "@/game/types";
 import { ActionPanel } from "./ActionPanel";
+import { AdrianoLogo } from "./AdrianoLogo";
 import { Card } from "./Card";
 import { GameLog } from "./GameLog";
 import { PlayerArea } from "./PlayerArea";
@@ -37,7 +38,7 @@ export function GameTable() {
     return () => clearTimeout(timer);
   }, [roundFinished, game?.round]);
 
-  if (!game) return <main className="welcome"><span className="logo-mark">▪▪<br/>▪▪</span><p className="kicker">Jeu de mémoire & stratégie</p><h1>ADRIANO</h1><p>Sept manches. Quatre joueurs. Le score le plus bas gagne.</p><button onClick={() => setGame(newGame())}>Nouvelle partie</button></main>;
+  if (!game) return <main className="welcome"><AdrianoLogo/><p className="kicker">Jeu de mémoire & stratégie</p><p>Sept manches. Quatre joueurs. Le score le plus bas gagne.</p><button onClick={() => setGame(newGame())}>Nouvelle partie</button></main>;
 
   const human = game.players[0];
   const canSelect = (playerId: number) => game.active === 0 && (

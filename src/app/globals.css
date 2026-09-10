@@ -23,3 +23,29 @@
 .final-hands header{display:flex;justify-content:space-between;gap:1rem;margin-bottom:.45rem;font-size:.75rem}
 .final-hands>section>div{display:flex;gap:.25rem}.final-hands .card{width:2.25rem;height:3.2rem}.final-hands .value{font-size:1.55rem}.final-hands .suit{font-size:.65rem}
 @keyframes flip-reveal{from{opacity:.4;transform:perspective(30rem) rotateY(90deg)}to{opacity:1;transform:perspective(30rem) rotateY(0)}}
+
+/* Identité visuelle des cartes ADRIANO */
+:root{--adriano-blue:#0a3762;--adriano-yellow:#ffbf00;--adriano-red:#d50000;--adriano-green:#006b19;--adriano-black:#090909}
+.adriano-logo{display:flex;align-items:center;justify-content:center;gap:clamp(1rem,3vw,2.2rem);color:#fff}
+.logo-word{font-size:clamp(3.5rem,12vw,8rem);font-weight:950;letter-spacing:.035em;line-height:.85;text-shadow:0 .08em .08em #0008}
+.logo-grid{display:grid;grid-template-columns:repeat(2,clamp(1.1rem,3vw,2.4rem));gap:.28rem}
+.logo-grid i{aspect-ratio:1;background:var(--adriano-yellow);border:2px solid #fff3}
+.adriano-logo.compact .logo-grid{grid-template-columns:repeat(2,1rem)}
+.welcome{background:var(--adriano-blue)}
+.welcome .kicker{margin-top:2.25rem}.welcome>p:not(.kicker){margin:.35rem 0 2rem}
+.card{isolation:isolate;border:3px solid #fff;border-radius:.45rem;box-shadow:0 .22rem .55rem #0004}
+.card.face{background:#fff;border-color:#fff}
+.card-shape{position:absolute;z-index:-1;inset:0;background:var(--adriano-yellow);clip-path:polygon(0 0,36% 0,50% 14%,64% 0,100% 0,100% 28%,78% 50%,100% 72%,100% 100%,64% 100%,50% 86%,36% 100%,0 100%,0 72%,22% 50%,0 28%)}
+.card.value-1 .card-shape,.card.value-4 .card-shape,.card.value-6 .card-shape,.card.value-11 .card-shape,.card.value-14 .card-shape{clip-path:inset(0)}
+.card.value-2 .card-shape,.card.value-5 .card-shape,.card.value-9 .card-shape,.card.value-12 .card-shape{clip-path:polygon(0 0,36% 0,36% 30%,64% 30%,64% 0,100% 0,100% 34%,76% 50%,100% 66%,100% 100%,64% 100%,64% 70%,36% 70%,36% 100%,0 100%,0 66%,24% 50%,0 34%)}
+.card.value-3 .card-shape,.card.value-8 .card-shape,.card.value-10 .card-shape,.card.value-13 .card-shape{clip-path:polygon(0 0,35% 0,50% 15%,65% 0,100% 0,100% 30%,78% 50%,100% 70%,100% 100%,65% 100%,50% 85%,35% 100%,0 100%,0 70%,22% 50%,0 30%)}
+.card.value-7 .card-shape,.card.value-15 .card-shape{clip-path:polygon(0 0,36% 0,36% 32%,64% 32%,64% 0,100% 0,100% 36%,72% 50%,100% 64%,100% 100%,62% 100%,50% 86%,38% 100%,0 100%,0 64%,28% 50%,0 36%)}
+.card .value{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(2.6rem,5vw,4.5rem);font-family:Impact,"Arial Black",sans-serif;font-weight:950;letter-spacing:-.06em;line-height:1;text-shadow:-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff,2px 2px 0 #fff}
+.card .corner{position:absolute;z-index:2;font-family:Impact,"Arial Black",sans-serif;font-size:.82rem;line-height:1;text-shadow:-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff,1px 1px 0 #fff}
+.corner.top-left{top:.28rem;left:.3rem}.corner.top-right{top:.28rem;right:.3rem}.corner.bottom-left{bottom:.28rem;left:.3rem;transform:rotate(180deg)}.corner.bottom-right{right:.3rem;bottom:.28rem;transform:rotate(180deg)}
+.card .red{color:var(--adriano-red)}.card .blue{color:var(--adriano-blue)}.card .green{color:var(--adriano-green)}.card .black{color:var(--adriano-black)}
+.card.back{display:grid;place-content:center;background:var(--adriano-blue);border-color:#fff;color:#fff}
+.card.back .mark{grid-template-columns:repeat(2,.72rem);gap:.16rem}.card.back .mark i{height:.72rem;background:var(--adriano-yellow);border:1px solid #fff}
+.back-brand{margin-bottom:.45rem;font-family:Impact,"Arial Black",sans-serif;font-size:.48rem;letter-spacing:.18em;transform:rotate(180deg)}
+.final-hands .card .corner{font-size:.42rem}.final-hands .card .value{font-size:1.55rem}
+@media(max-width:760px){.logo-word{font-size:3.3rem}.logo-grid{grid-template-columns:repeat(2,1.15rem)}.card .corner{font-size:.58rem}.card .value{font-size:2.35rem}}
