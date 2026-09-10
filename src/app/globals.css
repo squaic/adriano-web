@@ -49,3 +49,6 @@
 .back-brand{margin-bottom:.45rem;font-family:Impact,"Arial Black",sans-serif;font-size:.48rem;letter-spacing:.18em;transform:rotate(180deg)}
 .final-hands .card .corner{font-size:.42rem}.final-hands .card .value{font-size:1.55rem}
 @media(max-width:760px){.logo-word{font-size:3.3rem}.logo-grid{grid-template-columns:repeat(2,1.15rem)}.card .corner{font-size:.58rem}.card .value{font-size:2.35rem}}
+.phase-power7 .player-0 .card.face,.phase-power9 .player:not(.player-0) .card.face,.phase-combination-selection .player-0 .card.face{animation:power-reveal .35s ease-out both}
+.actions .secondary{background:#ffffff18;color:#fff;border:1px solid #ffffff35}
+@keyframes power-reveal{from{transform:perspective(30rem) rotateY(90deg)}to{transform:perspective(30rem) rotateY(0)}}

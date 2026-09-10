@@ -38,6 +38,12 @@ export function takeDiscard(s: GameState): GameState {
 export function beginExchange(s: GameState): GameState {
   return s.phase === "drawn" && s.drawn ? { ...s, selected: [], phase: "exchange" } : s;
 }
+export function beginCombination(s: GameState): GameState {
+  return s.phase === "drawn" && s.drawn ? { ...s, selected: [], phase: "combination-selection" } : s;
+}
+export function cancelCombination(s: GameState): GameState {
+  return s.phase === "combination-selection" && s.drawn ? { ...s, selected: [], phase: "drawn" } : s;
+}
 export function exchange(s: GameState, index: number): GameState {
   if (!s.drawn) return s; const players = [...s.players], player = { ...players[s.active] }, cards = [...player.cards];
   const old = cards[index]; cards[index] = s.drawn; player.cards = cards;
@@ -49,6 +55,8 @@ export function discardDrawn(s: GameState): GameState {
   let next = note({ ...s, discard: [...s.discard, s.drawn], drawn: null }, value >= 3 && value <= 9 ? `${player.name} joue un ${value}.` : `${player.name} jette la carte piochée dans la fosse.`);
   if (value === 3) {
     if (!s.inBonus && s.caller === null) next = { ...next, bonusTurns: 2, inBonus: true };
+    const remaining = next.inBonus ? next.bonusTurns : 0;
+    if (remaining > 0) next = note(next, `${player.name} rejoue encore ${remaining} fois grâce au 3.`);
     return endTurn({ ...next, phase: "choose" });
   }
   if (value === 7) return { ...next, phase: "power7" };
@@ -80,7 +88,8 @@ export function attemptCombination(s: GameState, indices: number[]): GameState {
   const players = [...s.players], p = { ...players[s.active] }, picked = uniqueIndices.map(i => p.cards[i]);
   if (!picked.every(card => card.value === picked[0].value)) {
     p.penalties += 30; p.memory = picked.reduce((m, c) => remember(m, c.id, c.value), p.memory); players[s.active] = p;
-    return note({ ...s, players, phase: "drawn", selected: [] }, `${p.name} rate sa combinaison (+30).`);
+    const failedLabel = uniqueIndices.length === 2 ? "Paire" : uniqueIndices.length === 3 ? "Brelan" : "Carré";
+    return note({ ...s, players, phase: "drawn", selected: [] }, `${failedLabel} raté${uniqueIndices.length === 2 ? "e" : ""} — ${p.name} reçoit +30 points.`);
   }
   const keep = uniqueIndices[0], cards = p.cards.filter((_, i) => !uniqueIndices.includes(i)); cards.splice(keep, 0, s.drawn);
   p.cards = cards; p.memory = remember(p.memory, s.drawn.id, s.drawn.value); players[s.active] = p;

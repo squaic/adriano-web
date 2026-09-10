@@ -71,6 +71,8 @@ La table affiche les quatre joueurs, leurs cartes, la pioche, la fosse, la manch
 
 Au début, les deux cartes basses de l'humain sont visibles jusqu'au bouton « J'ai mémorisé ». Les pouvoirs affichent leurs instructions : choisir sa carte (7), sa carte puis une adverse (8), ou une adverse (9).
 
+Pour le 7 et le 9, la carte choisie se retourne graphiquement pendant un court délai avant d'être recachée et mémorisée. Pour une combinaison, le joueur choisit d'abord paire, brelan ou carré, sélectionne exactement le nombre demandé, puis confirme ou annule ; les cartes ne sont révélées qu'après confirmation.
+
 Direction : bleu marine, jaune chaud, blanc, grands chiffres et sobriété. Le dos porte quatre carrés jaunes et ADRIANO ; le recto reprend les aplats géométriques jaunes et blancs du jeu physique, avec quatre petites valeurs dans les coins et un très grand chiffre central dans la couleur de la carte. Le logo d'accueil associe le mot ADRIANO blanc aux quatre carrés jaunes. L'interface est responsive.
 
 Des animations légères matérialisent les trajets pioche → joueur, carte remplacée → fosse, fosse → joueur et les échanges à l'aveugle du pouvoir 8, sans jamais révéler une information secrète. À la fin d'une manche, les quatre jeux sont d'abord retournés sur la table pendant environ 1,5 seconde. Le récapitulatif apparaît ensuite avec les mains finales et annonce explicitement « ADRIANO RÉUSSI », « ADRIANO RATÉ » ou « ADRIANO — ÉGALITÉ », avec l'annonceur et les valeurs pertinentes.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { chooseReplacement, closeBotTurn, estimatedScore, resolveBotCard } from "../bot";
 import { cardPoints, createDeck } from "../deck";
-import { advanceTurn, attemptCombination, discardDrawn, draw, exchange, finishRound, newGame, newRound, power7, power8, power9, takeDiscard } from "../engine";
+import { advanceTurn, attemptCombination, beginCombination, choosePower8Self, discardDrawn, draw, exchange, finishRound, newGame, newRound, power7, power8, power9, takeDiscard } from "../engine";
 import { drawnCardForHuman, isDrawnCardVisible, visibleDiscard } from "../presentation";
 import { adrianoOutcome, handScore, scoreRound, winners } from "../scoring";
 import { Card, GameState, Player } from "../types";
@@ -36,6 +36,14 @@ describe("pouvoirs",()=>{
  it("le 7 mémorise sa carte",()=>{let s: GameState={...state(),drawn:card(7)};s=discardDrawn(s);s=power7(s,0);expect(s.players[0].memory[s.players[0].cards[0].id]).toBe(1)});
  it("le 8 échange deux cartes sans les mémoriser",()=>{let s=state();const a=s.players[0].cards[0],b=s.players[1].cards[0];s={...s,phase:"power8-other",powerSelf:0};const n=power8(s,1,0);expect(n.players[0].cards[0]).toBe(b);expect(n.players[1].cards[0]).toBe(a);expect(n.players[0].memory[b.id]).toBeUndefined()});
  it("le 9 mémorise une carte adverse",()=>{const s={...state(),phase:"power9" as const};const n=power9(s,1,0);const c=s.players[1].cards[0];expect(n.players[0].memory[c.id]).toBe(c.value)});
+});
+describe("parcours complets des actions",()=>{
+ it("pioche et jette un 3 puis joue exactement deux tours complets",()=>{let s: GameState={...state(),phase:"choose" as const,drawn:null,deck:[card(10),card(11),card(3)]};s=draw(s);expect(s.drawn?.value).toBe(3);s=discardDrawn(s);expect(s.discard.at(-1)?.value).toBe(3);expect(s.active).toBe(0);expect(s.bonusTurns).toBe(1);s=discardDrawn(draw(s));expect(s.active).toBe(0);expect(s.phase).toBe("choose");expect(s.bonusTurns).toBe(0);s=discardDrawn(draw(s));expect(s.active).toBe(0);expect(s.phase).toBe("turn-end")});
+ it("un second 3 pendant les bonus ne crée aucun tour supplémentaire",()=>{let s: GameState={...state(),phase:"choose" as const,drawn:null,deck:[card(12),card(3),card(3)]};s=discardDrawn(draw(s));expect(s.bonusTurns).toBe(1);s=discardDrawn(draw(s));expect(s.bonusTurns).toBe(0);s=discardDrawn(draw(s));expect(s.phase).toBe("turn-end")});
+ it("pioche et jette un 7, révèle sa carte, mémorise puis termine",()=>{let s: GameState={...state(),phase:"choose" as const,drawn:null,deck:[card(7)]};s=discardDrawn(draw(s));expect(s.phase).toBe("power7");const seen=s.players[0].cards[1];s=power7(s,1);expect(s.players[0].memory[seen.id]).toBe(seen.value);expect(s.phase).toBe("turn-end")});
+ it("pioche et jette un 8 puis échange réellement deux positions cachées",()=>{let s: GameState={...state(),phase:"choose" as const,drawn:null,deck:[card(8)]};const own=s.players[0].cards[2],other=s.players[2].cards[0];s=discardDrawn(draw(s));expect(s.phase).toBe("power8-self");s=choosePower8Self(s,2);expect(s.phase).toBe("power8-other");s=power8(s,2,0);expect(s.players[0].cards[2]).toBe(other);expect(s.players[2].cards[0]).toBe(own);expect(s.phase).toBe("turn-end")});
+ it("pioche et jette un 9 puis mémorise uniquement la carte adverse choisie",()=>{let s: GameState={...state(),phase:"choose" as const,drawn:null,deck:[card(9)]};const seen=s.players[3].cards[0],unseen=s.players[2].cards[0];s=discardDrawn(draw(s));expect(s.phase).toBe("power9");s=power9(s,3,0);expect(s.players[0].memory[seen.id]).toBe(seen.value);expect(s.players[0].memory[unseen.id]).toBeUndefined();expect(s.phase).toBe("turn-end")});
+ for(const [size,name,remaining] of [[2,"paire",3],[3,"brelan",2],[4,"carré",1]] as const) it(`confirme un ${name} réussi depuis le mode de sélection`,()=>{let s: GameState=state(Array(size).fill(5).concat(Array(4-size).fill(12)),card(1));s=beginCombination(s);expect(s.phase).toBe("combination-selection");s=attemptCombination(s,Array.from({length:size},(_,index)=>index));expect(s.players[0].cards).toHaveLength(remaining);expect(s.drawn).toBeNull()});
 });
 describe("manches et bots",()=>{
  it("ne transmet jamais la carte piochée par un bot à l'UI avant sa révélation",()=>{const secret=card(14,"red","secret-bot-draw");const before={...state(),active:2,phase:"choose" as const,drawn:null,deck:[secret],log:[]};const s=draw(before);expect(s.drawn).toBe(secret);expect(isDrawnCardVisible(s)).toBe(false);expect(drawnCardForHuman(s)).toBeNull();expect(s.log.join(" ")).not.toContain("14");expect(drawnCardForHuman({...s,active:0})).toBe(secret)});
