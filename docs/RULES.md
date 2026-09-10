@@ -73,7 +73,9 @@ Au début, les deux cartes basses de l'humain sont visibles jusqu'au bouton « J
 
 Direction : bleu marine, jaune chaud, blanc, grands chiffres et sobriété. Le dos porte quatre carrés jaunes et ADRIANO ; le recto clair montre un grand chiffre coloré. L'interface est responsive.
 
-Des animations légères matérialisent les trajets pioche → joueur, carte remplacée → fosse, fosse → joueur et les échanges à l'aveugle du pouvoir 8, sans jamais révéler une information secrète. Le récapitulatif annonce explicitement « ADRIANO RÉUSSI », « ADRIANO RATÉ » ou « ADRIANO — ÉGALITÉ », avec l'annonceur et les valeurs pertinentes.
+Des animations légères matérialisent les trajets pioche → joueur, carte remplacée → fosse, fosse → joueur et les échanges à l'aveugle du pouvoir 8, sans jamais révéler une information secrète. À la fin d'une manche, les quatre jeux sont d'abord retournés sur la table pendant environ 1,5 seconde. Le récapitulatif apparaît ensuite avec les mains finales et annonce explicitement « ADRIANO RÉUSSI », « ADRIANO RATÉ » ou « ADRIANO — ÉGALITÉ », avec l'annonceur et les valeurs pertinentes.
+
+Le journal présente les événements du plus ancien au plus récent et défile automatiquement vers la dernière action. Le sommet affiché de la fosse correspond toujours à son dernier élément, donc à la carte publiquement déposée le plus récemment.
 
 ## 22. Architecture
 

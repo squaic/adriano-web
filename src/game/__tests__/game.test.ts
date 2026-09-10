@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { chooseReplacement } from "../bot";
+import { chooseReplacement, resolveBotCard } from "../bot";
 import { cardPoints, createDeck } from "../deck";
 import { advanceTurn, attemptCombination, discardDrawn, draw, exchange, finishRound, newGame, newRound, power7, power8, power9, takeDiscard } from "../engine";
-import { isDrawnCardVisible } from "../presentation";
+import { drawnCardForHuman, isDrawnCardVisible, visibleDiscard } from "../presentation";
 import { adrianoOutcome, handScore, scoreRound, winners } from "../scoring";
 import { Card, GameState, Player } from "../types";
 const card=(value:number,color:Card["color"]="blue",id=`${color}-${value}-${Math.random()}`):Card=>({value,color,id});
@@ -36,7 +36,8 @@ describe("pouvoirs",()=>{
  it("le 9 mémorise une carte adverse",()=>{const s={...state(),phase:"power9" as const};const n=power9(s,1,0);const c=s.players[1].cards[0];expect(n.players[0].memory[c.id]).toBe(c.value)});
 });
 describe("manches et bots",()=>{
- it("ne montre jamais au joueur la carte piochée par un bot",()=>{const s={...state(),active:2,phase:"drawn" as const};expect(isDrawnCardVisible(s)).toBe(false);expect(isDrawnCardVisible({...s,active:0})).toBe(true)});
+ it("ne transmet jamais la carte piochée par un bot à l'UI avant sa révélation",()=>{const secret=card(14,"red","secret-bot-draw");const before={...state(),active:2,phase:"choose" as const,drawn:null,deck:[secret],log:[]};const s=draw(before);expect(s.drawn).toBe(secret);expect(isDrawnCardVisible(s)).toBe(false);expect(drawnCardForHuman(s)).toBeNull();expect(s.log.join(" ")).not.toContain("14");expect(drawnCardForHuman({...s,active:0})).toBe(secret)});
+ it("garde la dernière carte déposée comme sommet de fosse après plusieurs bots",()=>{let s: GameState={...state(),active:1,phase:"drawn" as const,drawn:card(2),discard:[card(7)]};const removedByBot1=s.players[1].cards[0];s=resolveBotCard(s,()=>.1);expect(visibleDiscard(s)).toBe(removedByBot1);s=advanceTurn(s);const three=card(3);s={...s,active:2,phase:"drawn",drawn:three};s=resolveBotCard(s,()=>.9);expect(visibleDiscard(s)).toBe(three)});
  it("recycle toute la fosse une seule fois",()=>{const s={...state(),phase:"choose" as const,deck:[],discard:[card(2),card(3),card(4)],drawn:null};const n=draw(s);expect(n.recycled).toBe(true);expect(n.drawn).not.toBeNull();expect(n.discard).toHaveLength(0);expect(n.deck).toHaveLength(2)});
  it("termine la manche à la seconde panne",()=>{const s={...state(),phase:"choose" as const,deck:[],discard:[card(2)],drawn:null,recycled:true};expect(draw(s).phase).toBe("round-end")});
  it("la partie se termine après exactement sept manches",()=>{const s={...newGame(()=>.2),round:7};expect(finishRound(s).phase).toBe("game-end")});
