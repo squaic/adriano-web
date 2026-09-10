@@ -63,7 +63,7 @@ Les scores s'accumulent pendant 7 manches. Le ou les joueurs ayant le plus petit
 
 ## 17. Bots
 
-Les bots utilisent exclusivement leur mémoire légitime. Ils remplacent de préférence une valeur élevée connue par une carte plus faible, conservent les cartes faibles, utilisent les pouvoirs, tentent une combinaison lorsqu'elle est connue, estiment leur main pour annoncer ADRIANO, et conservent une part d'aléatoire.
+Les bots utilisent exclusivement leur mémoire légitime. Ils remplacent de préférence une valeur élevée connue par une carte plus faible, conservent les cartes faibles, utilisent les pouvoirs et tentent une combinaison lorsqu'elle est connue. Pour annoncer ADRIANO, un bot additionne les valeurs mémorisées et estime chaque carte inconnue à 7,75 points. À la fin de son tour, sans annonce déjà active, une estimation inférieure ou égale à 14 lui donne 80 % de chances d'annoncer. Aucune valeur cachée inconnue n'entre dans cette décision.
 
 ## 18–21. Interface et design
 

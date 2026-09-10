@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chooseReplacement, resolveBotCard } from "../bot";
+import { chooseReplacement, closeBotTurn, estimatedScore, resolveBotCard } from "../bot";
 import { cardPoints, createDeck } from "../deck";
 import { advanceTurn, attemptCombination, discardDrawn, draw, exchange, finishRound, newGame, newRound, power7, power8, power9, takeDiscard } from "../engine";
 import { drawnCardForHuman, isDrawnCardVisible, visibleDiscard } from "../presentation";
@@ -17,7 +17,9 @@ describe("paquet et distribution",()=>{
 });
 describe("actions",()=>{
  it("place exactement la carte piochée à la position choisie et envoie l'ancienne dans la fosse",()=>{const s=state();const before=[...s.players[0].cards];const old=before[2];const n=exchange(s,2);expect(n.players[0].cards).toHaveLength(before.length);expect(n.players[0].cards[2]).toBe(s.drawn);expect(n.players[0].cards[0]).toBe(before[0]);expect(n.players[0].cards[1]).toBe(before[1]);expect(n.players[0].cards[3]).toBe(before[3]);expect(n.discard.at(-1)).toBe(old);expect(n.drawn).toBeNull()});
- for(const [name,size] of [["paire",2],["brelan",3],["carré",4]] as const) it(`réussit un ${name}`,()=>{const s=state(Array(size).fill(6).concat([9]).slice(0,4));const n=attemptCombination(s,Array.from({length:size},(_,i)=>i));expect(n.players[0].cards).toHaveLength(s.players[0].cards.length-size+1);if(size===4)expect(n.players.slice(1).every(p=>p.penalties===40)).toBe(true)});
+ for(const [name,size] of [["paire",2],["brelan",3],["carré",4]] as const) it(`réussit un ${name}`,()=>{const s=state(Array(size).fill(6).concat(Array(4-size).fill(9)));const n=attemptCombination(s,Array.from({length:size},(_,i)=>i));expect(n.players[0].cards).toHaveLength(5-size);if(size===4)expect(n.players.slice(1).every(p=>p.penalties===40)).toBe(true)});
+ it("réussit une paire depuis quatre cartes, les jette et conserve uniquement la carte piochée à leur place",()=>{const replacement=card(2,"green","drawn-pair");const s=state([6,11,6,9],replacement);const pair=[s.players[0].cards[0],s.players[0].cards[2]];const n=attemptCombination(s,[0,2]);expect(n.players[0].cards).toHaveLength(3);expect(n.players[0].cards[0]).toBe(replacement);expect(n.players[0].cards).not.toContain(pair[0]);expect(n.players[0].cards).not.toContain(pair[1]);expect(n.discard.slice(-2)).toEqual(pair)});
+ it("rate une paire différente, garde ses quatre cartes et cumule +30",()=>{const s=state([6,11,6,9]);const before=[...s.players[0].cards];const n=attemptCombination(s,[0,1]);expect(n.players[0].cards).toEqual(before);expect(n.players[0].cards).toHaveLength(4);expect(n.players[0].penalties).toBe(30);expect(n.drawn).toBe(s.drawn);expect(n.phase).toBe("drawn")});
  it("pénalise une combinaison ratée de +30 et conserve la pioche à résoudre",()=>{const s=state([1,2,3,4]);const n=attemptCombination(s,[0,1]);expect(n.players[0].penalties).toBe(30);expect(n.drawn).toEqual(s.drawn);expect(n.phase).toBe("drawn")});
  it("cumule les pénalités",()=>expect(scoreRound([player(0,[8,10],70),player(1,[30])],null)[0]).toBe(88));
 });
@@ -43,6 +45,9 @@ describe("manches et bots",()=>{
  it("la partie se termine après exactement sept manches",()=>{const s={...newGame(()=>.2),round:7};expect(finishRound(s).phase).toBe("game-end")});
  it("désigne tous les gagnants ex æquo",()=>{const ps=[player(0,[1]),player(1,[2]),player(2,[3])];ps[0].total=4;ps[1].total=4;ps[2].total=9;expect(winners(ps)).toEqual([0,1])});
  it("une décision de bot ne peut utiliser que la mémoire fournie",()=>{const ids=["secret-a","known-b"];expect(chooseReplacement({"known-b":12},ids,4,()=>.9)).toBe(1);expect(chooseReplacement({},ids,4,()=>.99)).toBeNull()});
+ it("estime chaque carte inconnue à 7,75 sans lire sa valeur réelle",()=>{const lowHidden=player(1,[1,15]);const highHidden=player(1,[1,2]);lowHidden.memory={[lowHidden.cards[0].id]:1};highHidden.cards[0]={...lowHidden.cards[0]};highHidden.memory={[highHidden.cards[0].id]:1};expect(estimatedScore(lowHidden)).toBe(8.75);expect(estimatedScore(highHidden)).toBe(8.75)});
+ it("un bot avec une estimation faible annonce ADRIANO avec un tirage inférieur à 80 %",()=>{const s=state();const players=[...s.players];players[1]={...players[1],cards:[card(2),card(4)],memory:{}};players[1].memory={[players[1].cards[0].id]:2};const turnEnd={...s,players,active:1,phase:"turn-end" as const,drawn:null};const announced=closeBotTurn(turnEnd,()=>.79);expect(announced.caller).toBe(1);expect(announced.active).toBe(2);expect(announced.finalTurns).toEqual([2,3,0])});
+ it("un bot n'annonce pas lorsque le tirage aléatoire atteint 80 %",()=>{const s=state();const players=[...s.players];players[1]={...players[1],cards:[card(1)],memory:{}};const turnEnd={...s,players,active:1,phase:"turn-end" as const,drawn:null};expect(closeBotTurn(turnEnd,()=>.8).caller).toBeNull()});
  it("un tour final avance puis finit correctement",()=>{const s={...state(),phase:"turn-end" as const,caller:1,active:0,finalTurns:[0]};expect(advanceTurn(s).phase).toBe("round-end")});
  it("calcule la valeur réelle d'une main",()=>expect(handScore(player(0,[2,3,4]))).toBe(9));
 });

@@ -74,16 +74,18 @@ export function power9(s: GameState, target: number, index: number): GameState {
   return endTurn(note({ ...s, players, phase: "choose" }, `${p.name} regarde une carte adverse.`));
 }
 export function attemptCombination(s: GameState, indices: number[]): GameState {
-  if (!s.drawn || ![2, 3, 4].includes(indices.length) || new Set(indices).size !== indices.length) return s;
-  const players = [...s.players], p = { ...players[s.active] }, picked = indices.map(i => p.cards[i]);
+  const uniqueIndices = [...new Set(indices)].sort((a, b) => a - b);
+  const playerCards = s.players[s.active].cards;
+  if (!s.drawn || ![2, 3, 4].includes(uniqueIndices.length) || uniqueIndices.some(index => index < 0 || index >= playerCards.length)) return s;
+  const players = [...s.players], p = { ...players[s.active] }, picked = uniqueIndices.map(i => p.cards[i]);
   if (!picked.every(card => card.value === picked[0].value)) {
     p.penalties += 30; p.memory = picked.reduce((m, c) => remember(m, c.id, c.value), p.memory); players[s.active] = p;
     return note({ ...s, players, phase: "drawn", selected: [] }, `${p.name} rate sa combinaison (+30).`);
   }
-  const keep = Math.min(...indices), cards = p.cards.filter((_, i) => !indices.includes(i)); cards.splice(keep, 0, s.drawn);
+  const keep = uniqueIndices[0], cards = p.cards.filter((_, i) => !uniqueIndices.includes(i)); cards.splice(keep, 0, s.drawn);
   p.cards = cards; p.memory = remember(p.memory, s.drawn.id, s.drawn.value); players[s.active] = p;
-  if (indices.length === 4) players.forEach((x, i) => { if (i !== s.active) players[i] = { ...x, penalties: x.penalties + 40 }; });
-  const label = indices.length === 2 ? "une paire" : indices.length === 3 ? "un brelan" : "un carré";
+  if (uniqueIndices.length === 4) players.forEach((x, i) => { if (i !== s.active) players[i] = { ...x, penalties: x.penalties + 40 }; });
+  const label = uniqueIndices.length === 2 ? "une paire" : uniqueIndices.length === 3 ? "un brelan" : "un carré";
   return endTurn(note({ ...s, players, discard: [...s.discard, ...picked], drawn: null, selected: [], phase: "choose" }, `${p.name} réalise ${label}.`));
 }
 export function announce(s: GameState): GameState {

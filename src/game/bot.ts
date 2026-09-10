@@ -16,7 +16,7 @@ export function knownCombination(player: Player): number[] {
 }
 export function estimatedScore(player: Player): number {
   const values = player.cards.map(c => player.memory[c.id]);
-  return values.reduce<number>((sum, value) => sum + (value ?? 8), 0);
+  return values.reduce<number>((sum, value) => sum + (value ?? 7.75), 0);
 }
 /** This decision boundary receives memory, not hidden card values. */
 export function chooseReplacement(memory: Memory, cardIds: string[], visibleValue: number, random = Math.random): number | null {
@@ -64,6 +64,6 @@ export function resolveBotPower(state: GameState, random = Math.random): GameSta
 }
 export function closeBotTurn(state: GameState, random = Math.random): GameState {
   if (state.phase !== "turn-end" || state.players[state.active].human) return state;
-  if (state.caller === null && estimatedScore(state.players[state.active]) <= 14 && random() < .7) return announce(state);
+  if (state.caller === null && estimatedScore(state.players[state.active]) <= 14 && random() < .8) return announce(state);
   return advanceTurn(state);
 }
