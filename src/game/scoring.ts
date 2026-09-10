@@ -1,6 +1,21 @@
 import { cardPoints } from "./deck";
 import { Player } from "./types";
 export const handScore = (player: Player) => player.cards.reduce((sum, card) => sum + cardPoints(card), 0);
+export type AdrianoOutcome = {
+  kind: "success" | "failure" | "tie";
+  caller: number;
+  callerScore: number;
+  lowerPlayer: number | null;
+  lowerScore: number | null;
+};
+export function adrianoOutcome(players: Player[], caller: number | null): AdrianoOutcome | null {
+  if (caller === null) return null;
+  const hands = players.map(handScore);
+  const lowerPlayer = hands.findIndex((score, index) => index !== caller && score < hands[caller]);
+  if (lowerPlayer >= 0) return { kind: "failure", caller, callerScore: hands[caller], lowerPlayer, lowerScore: hands[lowerPlayer] };
+  const tied = hands.some((score, index) => index !== caller && score === hands[caller]);
+  return { kind: tied ? "tie" : "success", caller, callerScore: hands[caller], lowerPlayer: null, lowerScore: null };
+}
 export function scoreRound(players: Player[], caller: number | null): number[] {
   const hands = players.map(handScore);
   return players.map((player, i) => {

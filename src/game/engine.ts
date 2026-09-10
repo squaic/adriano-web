@@ -13,8 +13,7 @@ export function newRound(round = 1, totals = [0, 0, 0, 0], random = Math.random)
     return { id, name, human: id === 0, cards, total: totals[id], penalties: 0,
       memory: { [cards[2].id]: cards[2].value, [cards[3].id]: cards[3].value } };
   });
-  const discard = [deck.pop()!];
-  return { players, deck, discard, round, active: 0, phase: "memorize", drawn: null, selected: [], powerSelf: null,
+  return { players, deck, discard: [], round, active: 0, phase: "memorize", drawn: null, selected: [], powerSelf: null,
     bonusTurns: 0, inBonus: false, recycled: false, caller: null, finalTurns: [], log: [`Manche ${round} : mémorisez vos deux cartes.`], roundScores: null };
 }
 export const newGame = (random = Math.random) => newRound(1, [0, 0, 0, 0], random);
@@ -36,6 +35,9 @@ export function takeDiscard(s: GameState): GameState {
   const discard = [...s.discard], drawn = discard.pop()!;
   return note({ ...s, discard, drawn, phase: "swap-discard" }, `${s.players[s.active].name} prend la fosse.`);
 }
+export function beginExchange(s: GameState): GameState {
+  return s.phase === "drawn" && s.drawn ? { ...s, selected: [], phase: "exchange" } : s;
+}
 export function exchange(s: GameState, index: number): GameState {
   if (!s.drawn) return s; const players = [...s.players], player = { ...players[s.active] }, cards = [...player.cards];
   const old = cards[index]; cards[index] = s.drawn; player.cards = cards;
@@ -44,7 +46,7 @@ export function exchange(s: GameState, index: number): GameState {
 }
 export function discardDrawn(s: GameState): GameState {
   if (!s.drawn) return s; const value = s.drawn.value, player = s.players[s.active];
-  let next = note({ ...s, discard: [...s.discard, s.drawn], drawn: null }, value >= 3 && value <= 9 ? `${player.name} joue un ${value}.` : `${player.name} défausse la carte piochée.`);
+  let next = note({ ...s, discard: [...s.discard, s.drawn], drawn: null }, value >= 3 && value <= 9 ? `${player.name} joue un ${value}.` : `${player.name} jette la carte piochée dans la fosse.`);
   if (value === 3) {
     if (!s.inBonus && s.caller === null) next = { ...next, bonusTurns: 2, inBonus: true };
     return endTurn({ ...next, phase: "choose" });

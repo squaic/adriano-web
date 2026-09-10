@@ -12,7 +12,7 @@ Le paquet contient 60 cartes : les valeurs 1 à 15 dans chacune des couleurs rou
 
 ## 2. Distribution et mémoire
 
-Chaque joueur reçoit quatre cartes cachées en carré. Le reste forme la pioche. Au début d'une manche, chacun mémorise uniquement ses cartes 3 et 4 (la rangée basse). L'humain les voit jusqu'à « J'ai mémorisé ». Ensuite, une carte ne peut être revue que via le 7. Chaque bot possède une mémoire distincte de la réalité et ne consulte jamais une carte inconnue.
+Chaque joueur reçoit quatre cartes cachées en carré. Le reste forme la pioche et **la fosse commence vide**. Au début d'une manche, chacun mémorise uniquement ses cartes 3 et 4 (la rangée basse). L'humain les voit jusqu'à « J'ai mémorisé ». Ensuite, une carte ne peut être revue que via le 7. Chaque bot possède une mémoire distincte de la réalité et ne consulte jamais une carte inconnue.
 
 ## 3. Ordre
 
@@ -24,7 +24,7 @@ Le joueur prend soit le dessus visible de la fosse, soit une carte cachée de la
 
 Avec la fosse, il choisit sans la regarder une de ses cartes : la carte de la fosse la remplace face cachée et l'ancienne est révélée dans la fosse. Aucun pouvoir ne s'active.
 
-Après une pioche, il voit la carte puis peut l'échanger avec une de ses cartes (choisie sans la regarder), la défausser, ou tenter une combinaison. Une carte remplacée va face visible dans la fosse.
+Après une pioche, il voit la carte puis peut l'échanger avec une de ses cartes (choisie sans la regarder), la jeter dans la fosse, ou tenter une combinaison. Une carte remplacée va face visible dans la fosse. Dans l'interface, **« Échanger »** conserve la carte piochée et remplace une carte ; **« Jeter dans la fosse »** ne la conserve pas.
 
 ## 7. Cartes spéciales
 
@@ -67,11 +67,13 @@ Les bots utilisent exclusivement leur mémoire légitime. Ils remplacent de pré
 
 ## 18–21. Interface et design
 
-La table affiche les quatre joueurs, leurs cartes, la pioche, la fosse, la manche, les scores cumulés, le joueur actif, les actions contextuelles et un journal sans information secrète. Toute sélection se fait en cliquant les cartes. Les actions impossibles sont masquées.
+La table affiche les quatre joueurs, leurs cartes, la pioche, la fosse, la manche, les scores cumulés, le joueur actif, les actions contextuelles et un journal sans information secrète. Toute sélection se fait en cliquant les cartes. Les actions impossibles sont masquées. Une carte piochée par un bot reste toujours face cachée pour l'humain jusqu'à son arrivée éventuelle dans la fosse.
 
 Au début, les deux cartes basses de l'humain sont visibles jusqu'au bouton « J'ai mémorisé ». Les pouvoirs affichent leurs instructions : choisir sa carte (7), sa carte puis une adverse (8), ou une adverse (9).
 
 Direction : bleu marine, jaune chaud, blanc, grands chiffres et sobriété. Le dos porte quatre carrés jaunes et ADRIANO ; le recto clair montre un grand chiffre coloré. L'interface est responsive.
+
+Des animations légères matérialisent les trajets pioche → joueur, carte remplacée → fosse, fosse → joueur et les échanges à l'aveugle du pouvoir 8, sans jamais révéler une information secrète. Le récapitulatif annonce explicitement « ADRIANO RÉUSSI », « ADRIANO RATÉ » ou « ADRIANO — ÉGALITÉ », avec l'annonceur et les valeurs pertinentes.
 
 ## 22. Architecture
 

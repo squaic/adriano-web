@@ -29,14 +29,21 @@ export function playBotTurn(state: GameState, random = Math.random): GameState {
   if (state.players[state.active]?.human || state.phase !== "choose") return state;
   const bot = state.players[state.active], top = state.discard.at(-1);
   const choice = chooseSource(bot, top?.value ?? null, random);
-  const s = choice.source === "discard" ? takeDiscard(state) : draw(state);
-  if (choice.source === "discard") return exchange(s, choice.replace ?? 0);
-  const drawn = s.drawn!;
+  return choice.source === "discard" ? takeDiscard(state) : draw(state);
+}
+export function resolveBotCard(state: GameState, random = Math.random): GameState {
+  if (state.players[state.active]?.human || !state.drawn || !["drawn", "swap-discard"].includes(state.phase)) return state;
+  const bot = state.players[state.active];
+  if (state.phase === "swap-discard") {
+    const target = chooseReplacement(bot.memory, bot.cards.map(card => card.id), cardPoints(state.drawn), random);
+    return exchange(state, target ?? Math.floor(random() * bot.cards.length));
+  }
+  const drawn = state.drawn;
   const combo = knownCombination(bot);
-  if (combo.length >= 2 && random() < .82) return attemptCombination(s, combo);
-  if ([3, 7, 8, 9].includes(drawn.value)) return discardDrawn(s);
+  if (combo.length >= 2 && random() < .82) return attemptCombination(state, combo);
+  if ([3, 7, 8, 9].includes(drawn.value)) return discardDrawn(state);
   const target = chooseReplacement(bot.memory, bot.cards.map(c => c.id), cardPoints(drawn), random);
-  return target === null ? discardDrawn(s) : exchange(s, target);
+  return target === null ? discardDrawn(state) : exchange(state, target);
 }
 export function resolveBotPower(state: GameState, random = Math.random): GameState {
   const bot = state.players[state.active];

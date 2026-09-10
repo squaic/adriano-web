@@ -6,7 +6,7 @@ export type Player = {
   id: number; name: string; human: boolean; cards: Card[]; memory: Memory;
   total: number; penalties: number;
 };
-export type Phase = "idle" | "memorize" | "choose" | "drawn" | "swap-discard" | "power7" | "power8-self" | "power8-other" | "power9" | "turn-end" | "round-end" | "game-end";
+export type Phase = "idle" | "memorize" | "choose" | "drawn" | "exchange" | "swap-discard" | "power7" | "power8-self" | "power8-other" | "power9" | "turn-end" | "round-end" | "game-end";
 export type GameState = {
   players: Player[]; deck: Card[]; discard: Card[]; round: number; active: number;
   phase: Phase; drawn: Card | null; selected: number[]; powerSelf: number | null;
