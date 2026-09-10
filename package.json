@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "check:conflicts": "node scripts/check-conflicts.mjs",
+    "prebuild": "npm run check:conflicts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

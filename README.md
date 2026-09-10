@@ -22,6 +22,7 @@ La V1 propose une partie complète en sept manches contre trois bots : pioche et
 ## Commandes
 
 - `npm run dev` lance le serveur de développement.
+- `npm run check:conflicts` vérifie qu'aucun marqueur de conflit Git ne subsiste.
 - `npm run build` crée une version de production.
 - `npm start` démarre la version de production.
 - `npm run lint` analyse le code avec ESLint.
