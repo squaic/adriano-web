@@ -36,6 +36,6 @@ describe("manches et bots",()=>{
  it("la partie se termine après exactement sept manches",()=>{const s={...newGame(()=>.2),round:7};expect(finishRound(s).phase).toBe("game-end")});
  it("désigne tous les gagnants ex æquo",()=>{const ps=[player(0,[1]),player(1,[2]),player(2,[3])];ps[0].total=4;ps[1].total=4;ps[2].total=9;expect(winners(ps)).toEqual([0,1])});
  it("une décision de bot ne peut utiliser que la mémoire fournie",()=>{const ids=["secret-a","known-b"];expect(chooseReplacement({"known-b":12},ids,4,()=>.9)).toBe(1);expect(chooseReplacement({},ids,4,()=>.99)).toBeNull()});
- it("un tour final avance puis finit correctement",()=>{let s={...state(),phase:"turn-end" as const,caller:1,active:0,finalTurns:[0]};expect(advanceTurn(s).phase).toBe("round-end")});
+ it("un tour final avance puis finit correctement",()=>{const s={...state(),phase:"turn-end" as const,caller:1,active:0,finalTurns:[0]};expect(advanceTurn(s).phase).toBe("round-end")});
  it("calcule la valeur réelle d'une main",()=>expect(handScore(player(0,[2,3,4]))).toBe(9));
 });

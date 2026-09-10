@@ -1,7 +1,7 @@
 import { createDeck, shuffle } from "./deck";
 import { forget, remember } from "./memory";
 import { scoreRound } from "./scoring";
-import { Card, GameState, Player } from "./types";
+import { GameState, Player } from "./types";
 
 const names = ["Vous", "Bot 1", "Bot 2", "Bot 3"];
 const note = (s: GameState, text: string): GameState => ({ ...s, log: [text, ...s.log].slice(0, 60) });

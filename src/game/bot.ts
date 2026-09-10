@@ -29,7 +29,7 @@ export function playBotTurn(state: GameState, random = Math.random): GameState {
   if (state.players[state.active]?.human || state.phase !== "choose") return state;
   const bot = state.players[state.active], top = state.discard.at(-1);
   const choice = chooseSource(bot, top?.value ?? null, random);
-  let s = choice.source === "discard" ? takeDiscard(state) : draw(state);
+  const s = choice.source === "discard" ? takeDiscard(state) : draw(state);
   if (choice.source === "discard") return exchange(s, choice.replace ?? 0);
   const drawn = s.drawn!;
   const combo = knownCombination(bot);
