@@ -26,7 +26,7 @@ describe("ADRIANO",()=>{
 });
 describe("pouvoirs",()=>{
  it("le 3 accorde exactement deux tours sans cumul",()=>{let s: GameState=state([1],card(3));s=discardDrawn(s);expect(s.bonusTurns).toBe(1);expect(s.active).toBe(0);s={...s,drawn:card(3),phase:"drawn"};s=discardDrawn(s);expect(s.bonusTurns).toBe(0);expect(s.phase).toBe("choose")});
- it("le 7 mémorise sa carte",()=>{let s={...state(),drawn:card(7)};s=discardDrawn(s);s=power7(s,0);expect(s.players[0].memory[s.players[0].cards[0].id]).toBe(1)});
+ it("le 7 mémorise sa carte",()=>{let s: GameState={...state(),drawn:card(7)};s=discardDrawn(s);s=power7(s,0);expect(s.players[0].memory[s.players[0].cards[0].id]).toBe(1)});
  it("le 8 échange deux cartes sans les mémoriser",()=>{let s=state();const a=s.players[0].cards[0],b=s.players[1].cards[0];s={...s,phase:"power8-other",powerSelf:0};const n=power8(s,1,0);expect(n.players[0].cards[0]).toBe(b);expect(n.players[1].cards[0]).toBe(a);expect(n.players[0].memory[b.id]).toBeUndefined()});
  it("le 9 mémorise une carte adverse",()=>{const s={...state(),phase:"power9" as const};const n=power9(s,1,0);const c=s.players[1].cards[0];expect(n.players[0].memory[c.id]).toBe(c.value)});
 });

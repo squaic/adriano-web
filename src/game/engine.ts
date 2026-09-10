@@ -26,7 +26,8 @@ function ensureDeck(s: GameState): GameState {
   return note({ ...s, deck: shuffle(s.discard), discard: [], recycled: true }, "La fosse est recyclée pour reformer la pioche.");
 }
 export function draw(s: GameState): GameState {
-  s = ensureDeck(s); if (s.phase === "round-end") return s;
+  s = ensureDeck(s);
+  if (s.phase === "round-end" || s.phase === "game-end") return s;
   const deck = [...s.deck], card = deck.pop()!;
   return note({ ...s, deck, drawn: card, phase: "drawn" }, `${s.players[s.active].name} pioche une carte.`);
 }
